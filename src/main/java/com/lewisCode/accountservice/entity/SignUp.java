@@ -1,5 +1,6 @@
 package com.lewisCode.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,13 +11,14 @@ import javax.validation.constraints.Email;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "sign_up")
+@Table(name = "signup")
 public class SignUp {
 
     private static final long serialVersionUID = 1L;
@@ -38,6 +40,9 @@ public class SignUp {
     @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @JsonIgnore
+    @OneToMany(targetEntity = Payment.class)
+    private List<Payment> payment;
 
 //    private String role;
 }

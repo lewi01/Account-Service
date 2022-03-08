@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface SignUpRepository extends JpaRepository<SignUp,Long> {
 
     Optional<SignUp> findByEmail(String email);
-    boolean existsByEmail(String email);
+
 }

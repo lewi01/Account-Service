@@ -3,6 +3,7 @@ package com.lewisCode.accountservice.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +19,8 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsService userDetailsService;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public WebConfiguration(RestAuthenticationEntryPoint restAuthenticationEntryPoint,
                             UserDetailsService userDetailsService) {
@@ -28,7 +31,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(userDetailsService);
+            auth.authenticationProvider(authenticationProvider());
     }
 
     @Override
@@ -40,6 +43,8 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
+                .anyRequest().denyAll()
                 // other matchers
                 .and()
                 .sessionManagement()
@@ -47,7 +52,10 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder getPassword(){
-        return new BCryptPasswordEncoder();
+    public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
     }
 }

@@ -40,7 +40,7 @@ public class SignUpServiceImp implements UserDetailsService {
     public List<SignUp> showAllUsers(){
         return signUpRepository.findAll();
     }
-    public boolean getUserByEmail(String email){
-        return signUpRepository.existsByEmail(email);
+    public Optional<SignUp> getUserByEmail(String email){
+        return signUpRepository.findByEmail(email);
     }
 }
