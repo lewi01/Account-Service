@@ -1,18 +1,26 @@
 package com.lewisCode.accountservice.entity;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MySignUpDetailService  implements UserDetails {
 
     private final String email;
     private final String password;
+   // private final List<GrantedAuthority> authorities;
 
     public MySignUpDetailService(SignUp signUp) {
         this.email = signUp.getEmail();
         this.password = signUp.getPassword();
+//        this.authorities = Arrays.stream(signUp.getEmail().split(","))
+//                      .map(SimpleGrantedAuthority::new)
+//                      .collect(Collectors.toList());
     }
 
     @Override

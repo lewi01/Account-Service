@@ -1,34 +1,65 @@
 package com.lewisCode.accountservice.controller;
 
+import com.lewisCode.accountservice.DTOs.ChangePassword;
+import com.lewisCode.accountservice.entity.MySignUpDetailService;
 import com.lewisCode.accountservice.entity.SignUp;
-import com.lewisCode.accountservice.errors.UserExistException;
+import com.lewisCode.accountservice.exeptions.BreachedPasswordException;
+import com.lewisCode.accountservice.exeptions.SamePasswordException;
+import com.lewisCode.accountservice.exeptions.UserExistException;
+import com.lewisCode.accountservice.service.BreachedPassword;
 import com.lewisCode.accountservice.service.SignUpServiceImp;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
+@AllArgsConstructor
+@Validated
 public class SignUpController {
 
     private final SignUpServiceImp signUpServiceImp;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final BreachedPassword breachedPassword;
 
-    public SignUpController(SignUpServiceImp signUpServiceImp, PasswordEncoder passwordEncoder) {
-        this.signUpServiceImp = signUpServiceImp;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<SignUp> signUp(@Valid @RequestBody SignUp signUp){
-        if (signUpServiceImp.getUserByEmail(signUp.getEmail()).isPresent()){
-            throw new UserExistException();
+        if (signUpServiceImp.getUserByEmail(signUp.getEmail())!= null){
+            throw new UserExistException("User Exist!");
+        }
+        if (breachedPassword.isBreached(signUp.getPassword())){
+            throw new BreachedPasswordException("The password is in the hacker's database");
         }
         signUp.setPassword(passwordEncoder.encode(signUp.getPassword()));
         return ResponseEntity.ok(signUpServiceImp.registration(signUp)) ;
     }
+    @GetMapping("/empl/payment")
+    public List<SignUp> getPayment(){
+        return signUpServiceImp.showAllUsers();
+    }
 
-
+    @PostMapping("/auth/changepass")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePassword changePassword,
+                                            @AuthenticationPrincipal MySignUpDetailService
+                                                    mySignUpDetailService){
+            if (breachedPassword.isBreached(changePassword.getPassword())){
+                throw new BreachedPasswordException("The password is in the hacker's database");
+            }
+            if (passwordEncoder.matches(changePassword.getPassword(),
+                    mySignUpDetailService.getPassword())){
+                throw new SamePasswordException("The passwords must be different");
+            }
+            SignUp signUp =  signUpServiceImp.getUserByEmail(mySignUpDetailService.getUsername());
+            signUp.setPassword(changePassword.getPassword());
+            signUpServiceImp.registration(signUp);
+            return  ResponseEntity.ok(Map.of("email:", signUp.getEmail(),
+                    "status:", "The password has been updated successfully"));
+    }
 }

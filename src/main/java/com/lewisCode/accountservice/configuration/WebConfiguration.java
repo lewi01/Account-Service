@@ -1,7 +1,9 @@
 package com.lewisCode.accountservice.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.lewisCode.accountservice.service.SignUpServiceImp;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,29 +11,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Configuration
+@AllArgsConstructor
 @EnableWebSecurity
 public class WebConfiguration extends WebSecurityConfigurerAdapter {
+
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-    @Autowired
-    UserDetailsService userDetailsService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    public WebConfiguration(RestAuthenticationEntryPoint restAuthenticationEntryPoint,
-                            UserDetailsService userDetailsService) {
-        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        this.userDetailsService = userDetailsService;
-    }
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final SignUpServiceImp signUpServiceImp;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(authenticationProvider());
+    protected void configure(AuthenticationManagerBuilder auth) {
+            auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Override
@@ -43,8 +36,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
-                .anyRequest().denyAll()
+                .anyRequest().authenticated()
                 // other matchers
                 .and()
                 .sessionManagement()
@@ -52,10 +44,10 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
+        provider.setUserDetailsService(signUpServiceImp);
         return provider;
     }
 }

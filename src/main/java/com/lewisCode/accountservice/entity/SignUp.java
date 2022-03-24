@@ -1,6 +1,5 @@
 package com.lewisCode.accountservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +10,7 @@ import javax.validation.constraints.Email;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import javax.validation.constraints.Size;
 
 
 @Data
@@ -39,10 +38,11 @@ public class SignUp {
     @NotNull
     @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Size(min = 12,message = "The password length must be at least 12 chars!")
     private String password;
-    @JsonIgnore
-    @OneToMany(targetEntity = Payment.class)
-    private List<Payment> payment;
+//    @JsonIgnore
+//    @OneToMany(cascade = CascadeType.ALL)
+//    private List<Payment> payment;
 
-//    private String role;
+//   private Set<Roles> roles;
 }

@@ -2,8 +2,8 @@ package com.lewisCode.accountservice.service;
 
 import com.lewisCode.accountservice.entity.MySignUpDetailService;
 import com.lewisCode.accountservice.entity.SignUp;
-import com.lewisCode.accountservice.errors.UserExistException;
 import com.lewisCode.accountservice.repository.SignUpRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,12 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class SignUpServiceImp implements UserDetailsService {
-    private final SignUpRepository signUpRepository;
 
-    public SignUpServiceImp(SignUpRepository signUpRepository) {
-        this.signUpRepository = signUpRepository;
-    }
+    private final SignUpRepository signUpRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -30,17 +28,13 @@ public class SignUpServiceImp implements UserDetailsService {
     }
 
     public SignUp registration(SignUp signUp){
-            Optional<SignUp> user1 = signUpRepository.findByEmail(signUp.getEmail());
-            if (user1.isPresent()){
-                throw new UserExistException();
-            }
-
            return signUpRepository.save(signUp);
     }
     public List<SignUp> showAllUsers(){
         return signUpRepository.findAll();
     }
-    public Optional<SignUp> getUserByEmail(String email){
-        return signUpRepository.findByEmail(email);
+    public SignUp getUserByEmail(String email){
+        Optional<SignUp> signUp = signUpRepository.findByEmail(email);
+        return signUp.get();
     }
 }
