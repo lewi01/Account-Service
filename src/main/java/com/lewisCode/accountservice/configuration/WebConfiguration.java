@@ -32,8 +32,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
         http.httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) // Handle auth error
                 .and()
-                .csrf().disable().headers().frameOptions().disable() // for Postman, the H2 console
-                .and()
+                .csrf().disable() // for Postman
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .anyRequest().authenticated()

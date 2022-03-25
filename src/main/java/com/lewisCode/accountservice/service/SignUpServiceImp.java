@@ -33,8 +33,7 @@ public class SignUpServiceImp implements UserDetailsService {
     public List<SignUp> showAllUsers(){
         return signUpRepository.findAll();
     }
-    public SignUp getUserByEmail(String email){
-        Optional<SignUp> signUp = signUpRepository.findByEmail(email);
-        return signUp.get();
+    public Optional<SignUp> getUserByEmail(String email){
+        return signUpRepository.findByEmail(email);
     }
 }

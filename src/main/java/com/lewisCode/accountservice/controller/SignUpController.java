@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -31,7 +32,7 @@ public class SignUpController {
 
     @PostMapping("/auth/signup")
     public ResponseEntity<SignUp> signUp(@Valid @RequestBody SignUp signUp){
-        if (signUpServiceImp.getUserByEmail(signUp.getEmail())!= null){
+        if (signUpServiceImp.getUserByEmail(signUp.getEmail()).isPresent()){
             throw new UserExistException("User Exist!");
         }
         if (breachedPassword.isBreached(signUp.getPassword())){
@@ -56,10 +57,15 @@ public class SignUpController {
                     mySignUpDetailService.getPassword())){
                 throw new SamePasswordException("The passwords must be different");
             }
-            SignUp signUp =  signUpServiceImp.getUserByEmail(mySignUpDetailService.getUsername());
-            signUp.setPassword(changePassword.getPassword());
-            signUpServiceImp.registration(signUp);
-            return  ResponseEntity.ok(Map.of("email:", signUp.getEmail(),
+            Optional<SignUp> signUp =
+                    signUpServiceImp.getUserByEmail(mySignUpDetailService.getUsername());
+            String mail ="";
+            if (signUp.isPresent()){
+              signUp.get().setPassword(passwordEncoder.encode(changePassword.getPassword()));
+              signUpServiceImp.registration(signUp.get());
+              mail = signUp.get().getEmail();
+            }
+            return  ResponseEntity.ok(Map.of("email:",mail ,
                     "status:", "The password has been updated successfully"));
     }
 }

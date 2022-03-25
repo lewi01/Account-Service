@@ -33,7 +33,7 @@ public class SignUp {
     private String lastname;
     @NotNull
     @NotEmpty
-    @Email(regexp = "\\w+(@acme.com)$", message="Invalid mail")
+    @Email(regexp = "\\w+(@acme.com)$", message="Invalid mail it must contain @acme.com")
     private String email;
     @NotNull
     @NotEmpty
