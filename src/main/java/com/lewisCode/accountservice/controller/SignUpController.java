@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,11 +40,6 @@ public class SignUpController {
         signUp.setPassword(passwordEncoder.encode(signUp.getPassword()));
         return ResponseEntity.ok(signUpServiceImp.registration(signUp)) ;
     }
-    @GetMapping("/empl/payment")
-    public List<SignUp> getPayment(){
-        return signUpServiceImp.showAllUsers();
-    }
-
     @PostMapping("/auth/changepass")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePassword changePassword,
                                             @AuthenticationPrincipal MySignUpDetailService

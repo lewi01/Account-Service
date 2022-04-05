@@ -2,33 +2,35 @@ package com.lewisCode.accountservice.Validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class PeriodValidator implements ConstraintValidator<PeriodValidation,String> {
 
-    private final SimpleDateFormat format = new SimpleDateFormat("MM-yyyy");
+    private String pattern;
 
     @Override
     public void initialize(PeriodValidation constraintAnnotation) {
-
+        this.pattern = constraintAnnotation.pattern();
     }
 
     @Override
     public boolean isValid(String date, ConstraintValidatorContext constraintValidatorContext) {
-        boolean valid = false;
-        if (date == null || date.trim().equals("")){
-            return false;
-        }else {
-            try {
-                format.parse(date);
-                format.setLenient(false);
-               valid=true;
-            }catch (ParseException e){
-                e.printStackTrace();
-            }
+        if (date == null){
+            return true;
         }
-        return valid;
+
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        dateFormat.setLenient(false);
+            try {
+                dateFormat.parse(date);
+                return true;
+            }catch (ParseException e) {
+                e.printStackTrace();
+                return false;
+            }
     }
+
+
 }

@@ -19,4 +19,6 @@ public @interface PeriodValidation {
 
     Class<? extends Payload>[] payload() default {};
 
+    String pattern();
+
 }

@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,9 +28,6 @@ public class SignUpServiceImp implements UserDetailsService {
 
     public SignUp registration(SignUp signUp){
            return signUpRepository.save(signUp);
-    }
-    public List<SignUp> showAllUsers(){
-        return signUpRepository.findAll();
     }
     public Optional<SignUp> getUserByEmail(String email){
         return signUpRepository.findByEmail(email);

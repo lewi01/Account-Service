@@ -4,6 +4,7 @@ import com.lewisCode.accountservice.entity.ExceptionMessage;
 import com.lewisCode.accountservice.exeptions.BreachedPasswordException;
 import com.lewisCode.accountservice.exeptions.SamePasswordException;
 import com.lewisCode.accountservice.exeptions.UserExistException;
+import com.lewisCode.accountservice.exeptions.WrongPaymentException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,10 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     private final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers, HttpStatus status,
+            WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
         body.put("status", status.value());
@@ -50,7 +52,8 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler (value = UserExistException.class)
-    public ResponseEntity<Object>userAllReadyExist(HttpServletRequest request, UserExistException e){
+    public ResponseEntity<Object>userAllReadyExist(HttpServletRequest request,
+                                                   UserExistException e){
         ExceptionMessage exceptionMessage = new ExceptionMessage(
                 LocalDateTime.now(),
                 badRequest.value(),
@@ -72,6 +75,17 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler (value = SamePasswordException.class)
     public ResponseEntity<Object>samePasswordException(HttpServletRequest request,
+                                                       SamePasswordException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+    @ExceptionHandler (value = WrongPaymentException.class)
+    public ResponseEntity<Object>wrongPaymentException(HttpServletRequest request,
                                                        SamePasswordException e) {
         ExceptionMessage exceptionMessage = new ExceptionMessage(
                 LocalDateTime.now(),

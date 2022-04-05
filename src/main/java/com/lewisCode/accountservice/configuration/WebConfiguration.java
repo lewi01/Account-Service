@@ -35,6 +35,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable() // for Postman
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/acct/payments").permitAll()
                 .anyRequest().authenticated()
                 // other matchers
                 .and()
