@@ -24,4 +24,9 @@ public class PaymentController {
         paymentService.createPayment(payments);
         return ResponseEntity.ok(Map.of("status:", "Added successfully!"));
     }
+    @PutMapping("/acct/payments")
+    public ResponseEntity<?> updatePayment(@Valid @RequestBody Payment payments){
+        paymentService.updatePayment(payments);
+        return ResponseEntity.ok(Map.of("status:", "Updated successfully!"));
+    }
 }

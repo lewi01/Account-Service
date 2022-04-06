@@ -16,6 +16,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -27,6 +30,11 @@ import java.util.stream.Collectors;
 public class GlobalExceptionController extends ResponseEntityExceptionHandler {
 
     private final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public void constraintViolationException(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value());
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -43,9 +51,7 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
-
         body.put("errors", errors);
-        body.put("Path",request.getContextPath());
 
         return new ResponseEntity<>(body, headers, status);
 
@@ -86,7 +92,7 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler (value = WrongPaymentException.class)
     public ResponseEntity<Object>wrongPaymentException(HttpServletRequest request,
-                                                       SamePasswordException e) {
+                                                       WrongPaymentException e) {
         ExceptionMessage exceptionMessage = new ExceptionMessage(
                 LocalDateTime.now(),
                 badRequest.value(),

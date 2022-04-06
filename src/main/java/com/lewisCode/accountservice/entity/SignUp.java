@@ -15,10 +15,10 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "signup")
 public class SignUp {
 
@@ -43,7 +43,7 @@ public class SignUp {
     @Size(min = 12,message = "The password length must be at least 12 chars!")
     private String password;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "signUp", cascade = CascadeType.ALL)
     private List<Payment> payment;
 
 //   private Set<Roles> roles;

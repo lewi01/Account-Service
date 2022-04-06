@@ -31,6 +31,4 @@ public class PeriodValidator implements ConstraintValidator<PeriodValidation,Str
                 return false;
             }
     }
-
-
 }

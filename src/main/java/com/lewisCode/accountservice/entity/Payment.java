@@ -1,5 +1,6 @@
 package com.lewisCode.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lewisCode.accountservice.Validation.PeriodValidation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +11,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
-
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 @Table(name = "payment")
 public class Payment {
     private static final long serialVersionUID = 1L;
@@ -28,13 +28,15 @@ public class Payment {
     private String period;
     @Min(value = 1, message = "Salary must be non negative!")
     private Long salary;
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sign_up_id")
     private SignUp signUp;
 
-    public void setSalary(Long salary) {
-        Long dollars = salary / 100;
-        Long cents = salary % 100;
-        this.salary = Long.valueOf(String.format("%d dollar(s) %d cent(s)",dollars,cents));
-    }
+//    public void setSalary(Long salary) {
+//        Long dollars = salary / 100;
+//        Long cents = salary % 100;
+//        String.format("%d dollar(s) %d cent(s)",dollars,cents);
+//    }
 
 }
