@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 
-@Entity
+@Entity(name = "signup")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
