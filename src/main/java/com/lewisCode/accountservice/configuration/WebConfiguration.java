@@ -1,6 +1,6 @@
 package com.lewisCode.accountservice.configuration;
 
-import com.lewisCode.accountservice.service.SignUpServiceImp;
+import com.lewisCode.accountservice.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final SignUpServiceImp signUpServiceImp;
+    private final UserService signUpServiceImp;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -37,6 +37,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/acct/payments").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/acct/payments").permitAll()
+//                .antMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
                 .anyRequest().authenticated()
                 // other matchers
                 .and()

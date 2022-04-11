@@ -1,14 +1,16 @@
 package com.lewisCode.accountservice.DTOs;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-@Getter
-@Setter
-public class GetPaymentDTO {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class GetPayment {
     private String name;
     private String lastname;
     private String period;
@@ -25,4 +27,5 @@ public class GetPaymentDTO {
         Long cents = salary % 100;
         this.salary = String.format("%d dollar(s) %d cent(s)",dollars,cents);
     }
+
 }

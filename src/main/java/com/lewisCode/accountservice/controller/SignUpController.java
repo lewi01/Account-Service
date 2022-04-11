@@ -1,13 +1,15 @@
 package com.lewisCode.accountservice.controller;
 
 import com.lewisCode.accountservice.DTOs.ChangePassword;
-import com.lewisCode.accountservice.entity.MySignUpDetailService;
-import com.lewisCode.accountservice.entity.SignUp;
+import com.lewisCode.accountservice.DTOs.GetUser;
+import com.lewisCode.accountservice.DTOs.NewUser;
+import com.lewisCode.accountservice.entity.myUserDetailService;
+import com.lewisCode.accountservice.entity.User;
 import com.lewisCode.accountservice.exeptions.BreachedPasswordException;
 import com.lewisCode.accountservice.exeptions.SamePasswordException;
 import com.lewisCode.accountservice.exeptions.UserExistException;
 import com.lewisCode.accountservice.service.BreachedPassword;
-import com.lewisCode.accountservice.service.SignUpServiceImp;
+import com.lewisCode.accountservice.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,24 +27,29 @@ import java.util.Optional;
 @Validated
 public class SignUpController {
 
-    private final SignUpServiceImp signUpServiceImp;
+    private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final BreachedPassword breachedPassword;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<SignUp> signUp(@Valid @RequestBody SignUp signUp){
-        if (signUpServiceImp.getUserByEmail(signUp.getEmail()).isPresent()){
+    public ResponseEntity<?> signUp(@Valid @RequestBody NewUser newUser){
+        if (userService.getUserByEmail(newUser.getEmail()).isPresent()){
             throw new UserExistException("User Exist!");
         }
-        if (breachedPassword.isBreached(signUp.getPassword())){
+        if (breachedPassword.isBreached(newUser.getPassword())) {
             throw new BreachedPasswordException("The password is in the hacker's database");
         }
-        signUp.setPassword(passwordEncoder.encode(signUp.getPassword()));
-        return ResponseEntity.ok(signUpServiceImp.registration(signUp)) ;
+        User user = new User();
+        user.setName(newUser.getName());
+        user.setLastname(newUser.getLastname());
+        user.setEmail(newUser.getEmail());
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+
+        return ResponseEntity.ok(new GetUser(userService.registration(user))) ;
     }
     @PostMapping("/auth/changepass")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePassword changePassword,
-                                            @AuthenticationPrincipal MySignUpDetailService
+                                            @AuthenticationPrincipal myUserDetailService
                                                     mySignUpDetailService){
             if (breachedPassword.isBreached(changePassword.getPassword())){
                 throw new BreachedPasswordException("The password is in the hacker's database");
@@ -51,12 +58,12 @@ public class SignUpController {
                     mySignUpDetailService.getPassword())){
                 throw new SamePasswordException("The passwords must be different");
             }
-            Optional<SignUp> signUp =
-                    signUpServiceImp.getUserByEmail(mySignUpDetailService.getUsername());
+            Optional<User> signUp =
+                    userService.getUserByEmail(mySignUpDetailService.getUsername());
             String mail ="";
             if (signUp.isPresent()){
               signUp.get().setPassword(passwordEncoder.encode(changePassword.getPassword()));
-              signUpServiceImp.registration(signUp.get());
+              userService.registration(signUp.get());
               mail = signUp.get().getEmail();
             }
             return  ResponseEntity.ok(Map.of("email:",mail ,

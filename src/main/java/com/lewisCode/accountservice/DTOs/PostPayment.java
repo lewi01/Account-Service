@@ -10,13 +10,11 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode
-public class PostPaymentDTO {
+public class PostPayment {
 
     @Email(regexp = "[\\w.]+(@acme.com)$",message = "You must enter a valid email" +
             " or Email must be from acme.com domain")
