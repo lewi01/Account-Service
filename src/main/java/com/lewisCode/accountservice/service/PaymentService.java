@@ -47,22 +47,25 @@ public class PaymentService {
             GetPayment getPaymentDTO = new GetPayment();
             getPaymentDTO.setName(payment.getUser().getName());
             getPaymentDTO.setLastname(payment.getUser().getLastname());
-            getPaymentDTO.setPeriod((Date) payment.getPeriod());
+            getPaymentDTO.setPeriod(payment.getPeriod());
             getPaymentDTO.setSalary(payment.getSalary());
 
             return getPaymentDTO;
         }).collect(Collectors.toList());
     }
-    public GetPayment selectPayRollByPeriod(Date period, String email){
+    public GetPayment selectPayRollByPeriod(Date period){
         Payment payment =
-                paymentRepository.findByPeriodAndUser_Email(period,email)
-                .stream().findFirst().get();
+                paymentRepository.findByPeriod(period);
         GetPayment getPaymentDTO = new GetPayment();
-        getPaymentDTO.setName(payment.getUser().getName());
-        getPaymentDTO.setLastname(payment.getUser().getLastname());
-        getPaymentDTO.setPeriod((Date) payment.getPeriod());
-        getPaymentDTO.setSalary(payment.getSalary());
+        if (payment != null) {
+
+            getPaymentDTO.setName(payment.getUser().getName());
+            getPaymentDTO.setLastname(payment.getUser().getLastname());
+            getPaymentDTO.setPeriod(payment.getPeriod());
+            getPaymentDTO.setSalary(payment.getSalary());
+        }
         return getPaymentDTO;
+
     }
 
 }

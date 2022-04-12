@@ -1,10 +1,7 @@
 package com.lewisCode.accountservice.controller;
 
 import com.lewisCode.accountservice.entity.ExceptionMessage;
-import com.lewisCode.accountservice.exeptions.BreachedPasswordException;
-import com.lewisCode.accountservice.exeptions.SamePasswordException;
-import com.lewisCode.accountservice.exeptions.UserExistException;
-import com.lewisCode.accountservice.exeptions.WrongPaymentException;
+import com.lewisCode.accountservice.exeptions.*;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +27,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionController extends ResponseEntityExceptionHandler {
 
     private final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+    private final HttpStatus notFound  = HttpStatus.NOT_FOUND;
 
     @ExceptionHandler(ConstraintViolationException.class)
     public void constraintViolationException(HttpServletResponse response) throws IOException {
@@ -100,5 +98,108 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
                 e.getMessage(),
                 request.getServletPath());
         return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+    @ExceptionHandler (value = BlockAdministratorException.class)
+    public ResponseEntity<Object>blockAdministratorException(HttpServletRequest request,
+                                                             BlockAdministratorException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+    @ExceptionHandler (value = CombinedRolesException.class)
+    public ResponseEntity<Object>combinedRolesException(HttpServletRequest request,
+                                                             CombinedRolesException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+
+    @ExceptionHandler (value = EmptyRoleException.class)
+    public ResponseEntity<Object>emptyRoleException(HttpServletRequest request,
+                                                    EmptyRoleException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+    @ExceptionHandler (value = NotSupportedRoleOperationException.class)
+    public ResponseEntity<Object>notSupportedRoleOperationException(HttpServletRequest request,
+                                                                    NotSupportedRoleOperationException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+    @ExceptionHandler (value = RemoveAdministratorException.class)
+    public ResponseEntity<Object>removeAdministratorException(HttpServletRequest request,
+                                                              RemoveAdministratorException e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+
+    @ExceptionHandler (value = RoleNotFoundException .class)
+    public ResponseEntity<Object>roleNotFoundException (HttpServletRequest request,
+                                                        RoleNotFoundException  e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                notFound.value(),
+                notFound,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, notFound);
+    }
+    @ExceptionHandler (value = UserHasNotRoleSuchException .class)
+    public ResponseEntity<Object>userHasNotRoleSuchException (HttpServletRequest request,
+                                                              UserHasNotRoleSuchException  e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+
+    @ExceptionHandler (value = UserLockedException .class)
+    public ResponseEntity<Object>userLockedException (HttpServletRequest request,
+                                                      UserLockedException  e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                badRequest.value(),
+                badRequest,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, badRequest);
+    }
+
+    @ExceptionHandler (value = UserNotFoundException .class)
+    public ResponseEntity<Object>userNotFoundException (HttpServletRequest request,
+                                                        UserNotFoundException  e) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(
+                LocalDateTime.now(),
+                notFound.value(),
+                notFound,
+                e.getMessage(),
+                request.getServletPath());
+        return new ResponseEntity<>(exceptionMessage, notFound);
     }
 }

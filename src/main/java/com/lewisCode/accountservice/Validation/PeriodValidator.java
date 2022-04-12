@@ -2,7 +2,7 @@ package com.lewisCode.accountservice.Validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.text.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -21,7 +21,7 @@ public class PeriodValidator implements ConstraintValidator<PeriodValidation,Str
             return true;
         }
 
-        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
         dateFormat.setLenient(false);
             try {
                 dateFormat.parse(date);

@@ -28,7 +28,8 @@ public interface PaymentRepository extends JpaRepository<Payment,Long> {
               nativeQuery = true)
       int updatePayment(String email, Date period, long salary);
       List<Payment> findPaymentsByUser_EmailOrderByPeriodDesc(String email);
-      List<Payment> findByPeriodAndUser_Email(Date period,String email);
+      Payment findByPeriod(Date period);
+
       default java.sql.Date stringToDate(String date, String pattern) {
             SimpleDateFormat format = new SimpleDateFormat(pattern);
             format.setLenient(false);

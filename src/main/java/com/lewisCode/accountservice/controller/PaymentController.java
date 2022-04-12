@@ -45,8 +45,7 @@ public class PaymentController {
                                         ){
         if (period != null){
             Date date = paymentRepository.stringToDate(period,"MM-yyyy");
-            GetPayment paymentDTO = paymentService.selectPayRollByPeriod(date,
-                    userDetailService.getUsername());
+            GetPayment paymentDTO = paymentService.selectPayRollByPeriod(date);
             return  new ResponseEntity<>(paymentDTO, HttpStatus.OK);
         }
         List<GetPayment> paymentDTOS = paymentService
