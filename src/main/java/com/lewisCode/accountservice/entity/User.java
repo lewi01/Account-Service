@@ -41,12 +41,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     Set<Roles> roles = new HashSet<>();
 
-    @Column
-    private boolean isAccountNonLocked = true;
-
-    @Column
-    private int loginAttempts = 0;
-
     public void removeRole(Roles role) {
         this.roles.remove(role);
     }

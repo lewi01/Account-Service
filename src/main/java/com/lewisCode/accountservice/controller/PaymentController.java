@@ -2,7 +2,7 @@ package com.lewisCode.accountservice.controller;
 
 import com.lewisCode.accountservice.DTOs.GetPayment;
 import com.lewisCode.accountservice.DTOs.PostPayment;
-import com.lewisCode.accountservice.entity.myUserDetailService;
+import com.lewisCode.accountservice.entity.MyUserDetailService;
 import com.lewisCode.accountservice.repository.PaymentRepository;
 import com.lewisCode.accountservice.service.PaymentService;
 
@@ -38,7 +38,7 @@ public class PaymentController {
         return ResponseEntity.ok(Map.of("status:", "Updated successfully!"));
     }
     @GetMapping("/empl/payment")
-    public ResponseEntity<?>getPayments(@AuthenticationPrincipal myUserDetailService
+    public ResponseEntity<?>getPayments(@AuthenticationPrincipal MyUserDetailService
                                                     userDetailService,
                                         @RequestParam(name = "period", required = false)
                                                 String period

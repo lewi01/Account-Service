@@ -9,20 +9,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class myUserDetailService implements UserDetails {
+public class MyUserDetailService implements UserDetails {
 
     private final String email;
     private final String password;
     private final List<GrantedAuthority> authorities;
-    private final boolean accountNonLocked;
 
-    public myUserDetailService(User user) {
+    public MyUserDetailService(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.authorities = Arrays.stream(user.getEmail().split(","))
                       .map(SimpleGrantedAuthority::new)
                      .collect(Collectors.toList());
-        this.accountNonLocked = user.isAccountNonLocked();
     }
 
     @Override
@@ -47,7 +45,7 @@ public class myUserDetailService implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return true;
     }
 
     @Override

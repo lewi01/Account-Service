@@ -20,7 +20,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
 
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserService signUpServiceImp;
+    private final UserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -35,11 +35,13 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable() // for Postman
                 .authorizeRequests() // manage access
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/acct/payments").permitAll()
-                .antMatchers(HttpMethod.PUT, "/api/acct/payments").permitAll()
-//                .antMatchers(HttpMethod.GET, "/api/empl/payment").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/empl/payment").hasAnyRole("ACCOUNTANT","USER")
+                .antMatchers(HttpMethod.POST, "/api/acct/payments").hasRole("ACCOUNTANT")
+                .antMatchers(HttpMethod.PUT, "/api/acct/payments").hasRole("ACCOUNTANT")
+                .antMatchers(HttpMethod.GET, "/api/admin/user/").hasRole("ADMINISTRATION")
+                .antMatchers(HttpMethod.PUT, "/api/admin/user/role").hasRole("ADMINISTRATION")
+                .antMatchers(HttpMethod.DELETE, "/api/admin/user/*").hasRole("ADMINISTRATION")
                 .anyRequest().authenticated()
-                // other matchers
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -49,7 +51,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(signUpServiceImp);
+        provider.setUserDetailsService(userService);
         return provider;
     }
 }
