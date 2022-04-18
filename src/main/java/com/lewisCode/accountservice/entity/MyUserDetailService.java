@@ -13,14 +13,21 @@ public class MyUserDetailService implements UserDetails {
 
     private final String email;
     private final String password;
+
+    private final boolean isEnabled;
+
     private final List<GrantedAuthority> authorities;
+
+    private final boolean accountNonLocked;
 
     public MyUserDetailService(User user) {
         this.email = user.getEmail();
         this.password = user.getPassword();
+        this.isEnabled =user.isEnabled();
         this.authorities = Arrays.stream(user.getEmail().split(","))
                       .map(SimpleGrantedAuthority::new)
                      .collect(Collectors.toList());
+        this.accountNonLocked = user.isAccountNonLocked();
     }
 
     @Override
@@ -45,7 +52,7 @@ public class MyUserDetailService implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
@@ -55,6 +62,6 @@ public class MyUserDetailService implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }

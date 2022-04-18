@@ -1,10 +1,12 @@
 package com.lewisCode.accountservice.entity;
 
+import com.lewisCode.accountservice.enums.Roles;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +36,9 @@ public class User {
     @Column
     private String password;
 
+    @Column
+    private boolean isEnabled;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Payment> payment;
 
@@ -41,17 +46,24 @@ public class User {
     @Enumerated(EnumType.STRING)
     Set<Roles> roles = new HashSet<>();
 
+    @Column
+    private boolean accountNonLocked;
+
+    @Column
+    private int failedAttempt;
+
+    @Column()
+    private Date lockTime;
+
     public void removeRole(Roles role) {
         this.roles.remove(role);
     }
     public void addRole(Roles role) {
         this.roles.add(role);
     }
-
     public boolean hasRole(Roles role) {
         return roles.contains(role);
     }
-
     public Set<String> getRolesString() {
         return roles.stream().map(Enum::name).collect(Collectors.toSet());
     }

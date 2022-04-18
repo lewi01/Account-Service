@@ -39,7 +39,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/acct/payments").hasRole("ACCOUNTANT")
                 .antMatchers(HttpMethod.PUT, "/api/acct/payments").hasRole("ACCOUNTANT")
                 .antMatchers(HttpMethod.GET, "/api/admin/user/").hasRole("ADMINISTRATION")
-                .antMatchers(HttpMethod.PUT, "/api/admin/user/role").hasRole("ADMINISTRATION")
+                .antMatchers(HttpMethod.PUT, "/api/admin/user/roles").hasRole("ADMINISTRATION")
                 .antMatchers(HttpMethod.DELETE, "/api/admin/user/*").hasRole("ADMINISTRATION")
                 .anyRequest().authenticated()
                 .and()

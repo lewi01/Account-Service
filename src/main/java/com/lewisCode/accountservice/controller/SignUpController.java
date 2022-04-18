@@ -3,7 +3,7 @@ package com.lewisCode.accountservice.controller;
 import com.lewisCode.accountservice.DTOs.ChangePassword;
 import com.lewisCode.accountservice.DTOs.GetUser;
 import com.lewisCode.accountservice.DTOs.NewUser;
-import com.lewisCode.accountservice.entity.Roles;
+import com.lewisCode.accountservice.enums.Roles;
 import com.lewisCode.accountservice.entity.MyUserDetailService;
 import com.lewisCode.accountservice.entity.User;
 import com.lewisCode.accountservice.exeptions.BreachedPasswordException;

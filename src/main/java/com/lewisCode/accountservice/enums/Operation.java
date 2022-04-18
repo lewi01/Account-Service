@@ -1,4 +1,4 @@
-package com.lewisCode.accountservice.entity;
+package com.lewisCode.accountservice.enums;
 
 public enum Operation {
     GRANT, REMOVE;
