@@ -3,6 +3,7 @@ package com.lewisCode.accountservice.controller;
 import com.lewisCode.accountservice.DTOs.ChangePassword;
 import com.lewisCode.accountservice.DTOs.GetUser;
 import com.lewisCode.accountservice.DTOs.NewUser;
+import com.lewisCode.accountservice.enums.Actions;
 import com.lewisCode.accountservice.enums.Roles;
 import com.lewisCode.accountservice.entity.MyUserDetailService;
 import com.lewisCode.accountservice.entity.User;
@@ -10,6 +11,7 @@ import com.lewisCode.accountservice.exeptions.BreachedPasswordException;
 import com.lewisCode.accountservice.exeptions.SamePasswordException;
 import com.lewisCode.accountservice.exeptions.UserExistException;
 import com.lewisCode.accountservice.service.BreachedPassword;
+import com.lewisCode.accountservice.service.LogService;
 import com.lewisCode.accountservice.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
@@ -34,8 +37,11 @@ public class SignUpController {
     private final BreachedPassword breachedPassword;
     private static boolean isFirst = true;
 
+    private final LogService logService;
+
     @PostMapping("/auth/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody NewUser newUser){
+    public ResponseEntity<?> signUp(@Valid @RequestBody NewUser newUser,
+                                    HttpServletRequest httpServletRequest){
         if (userService.getUserByEmail(newUser.getEmail()).isPresent()){
             throw new UserExistException("User Exist!");
         }
@@ -49,13 +55,15 @@ public class SignUpController {
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setRoles(Set.of(isFirst? Roles.ADMINISTRATION:Roles.USER));
         isFirst = false;
-
+        logService.createLogs(Actions.CREATE_USER,"Anonymous",user.getEmail(),
+                httpServletRequest.getRequestURI());
         return ResponseEntity.ok(new GetUser(userService.registration(user))) ;
     }
     @PostMapping("/auth/changepass")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePassword changePassword,
                                             @AuthenticationPrincipal MyUserDetailService
-                                                    myUserDetailService){
+                                                    myUserDetailService,
+                                            HttpServletRequest httpServletRequest){
             if (breachedPassword.isBreached(changePassword.getPassword())){
                 throw new BreachedPasswordException("The password is in the hacker's database");
             }
@@ -71,6 +79,8 @@ public class SignUpController {
               userService.registration(signUp.get());
               mail = signUp.get().getEmail();
             }
+        logService.createLogs(Actions.CHANGE_PASSWORD, myUserDetailService.getUsername(),
+                myUserDetailService.getUsername(), httpServletRequest.getRequestURI());
             return  ResponseEntity.ok(Map.of("email:",mail ,
                     "status:", "The password has been updated successfully"));
     }

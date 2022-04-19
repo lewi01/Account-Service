@@ -1,5 +1,7 @@
 package com.lewisCode.accountservice.configuration;
 
+import com.lewisCode.accountservice.AuthenticationFailureHandler.CustomLoginAccessDeniedHandler;
+import com.lewisCode.accountservice.service.LogService;
 import com.lewisCode.accountservice.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,7 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
+    private final LogService logService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -40,11 +43,15 @@ public class WebConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/acct/payments").hasRole("ACCOUNTANT")
                 .antMatchers(HttpMethod.GET, "/api/admin/user/").hasRole("ADMINISTRATION")
                 .antMatchers(HttpMethod.PUT, "/api/admin/user/roles").hasRole("ADMINISTRATION")
-                .antMatchers(HttpMethod.DELETE, "/api/admin/user/*").hasRole("ADMINISTRATION")
+                .antMatchers(HttpMethod.DELETE, "/api/admin/user/**").hasRole("ADMINISTRATION")
+                .antMatchers(HttpMethod.GET, "/api/security/events/").hasRole("AUDITOR")
+                .antMatchers(HttpMethod.PUT, "/api/admin/user/access").hasRole("ADMINISTRATION")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling().accessDeniedHandler(new CustomLoginAccessDeniedHandler(logService));
     }
 
     @Bean
